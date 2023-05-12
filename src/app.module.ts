@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from './common/common.module';
+import { EnvConfiguration } from './config/env.config';
+import { JoiValidationSchema } from './config/joi.validation';
 import { PokemonModule } from './pokemon/pokemon.module';
 import { SeedModule } from './seed/seed.module';
 
@@ -8,7 +11,11 @@ import { SeedModule } from './seed/seed.module';
   imports: [
     PokemonModule,
     CommonModule,
-    MongooseModule.forRoot('mongodb://localhost:27017/nest-pokemon'),
+    ConfigModule.forRoot({
+      load: [EnvConfiguration],
+      validationSchema: JoiValidationSchema,
+    }),
+    MongooseModule.forRoot(process.env.MONGODB),
     SeedModule,
   ],
 })
